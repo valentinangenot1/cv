@@ -244,7 +244,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
         <h2>Bon en cabine,<br>meilleur dehors.</h2>
         <div style="margin-top:14px">
           <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div><p><b>Gérer les imprévus.</b></p></div>
-          <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div><p><b>Parler aux locaux.</b> Partout, tout le temps, parfois trop.</p></div>
+          <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div><p><b>Parler aux locaux.</b>  </p></div>
           <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div><p><b>Photographe officiel.</b></p></div>
           <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div><p><b>Traducteur.</b> Français, espagnol, anglais.</p></div>
           <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg></div><p><b>Massage les pieds dans le sable.</b> Spécialité maison. Sur demande, évidemment.</p></div>
@@ -293,7 +293,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
       <div class="q">
         <div class="qnum">question 01 / 07</div>
         <h2>Tu habites où ?</h2>
-        <p class="lede">Moi c'est Heusy. Toi, je viens te chercher où ?</p>
+        <p class="lede">Je viens te chercher où ?</p>
         <input type="text" class="qinput" id="ville" placeholder="ta ville / ton quartier" oninput="ans.ville=this.value">
       </div>
       <div class="btns"><button class="btn btn-go" onclick="go(9)">Suivant</button></div>
@@ -306,7 +306,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
       <div class="q">
         <div class="qnum">question 02 / 07</div>
         <h2>Et tu mesures combien ?</h2>
-        <p class="lede">Moi 1m81. Place le curseur, pas de triche.</p>
+        <p class="lede">Meuf de poche ou pas ?</p>
         <div class="slider-wrap">
           <div class="slider-ends"><span>1m50</span><span>1m81</span></div>
           <input type="range" min="150" max="181" value="166" id="qt" oninput="slideTaille(this)">
@@ -323,7 +323,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
       <div class="q">
         <div class="qnum">question 03 / 07</div>
         <h2>Ton ronflement, c'est plutôt...</h2>
-        <p class="lede">Moi je suis niveau voiture électrique, certifié. À toi d'être honnête.</p>
+        <p class="lede">Moi je suis niveau voiture électrique, certifié. Et toi, tracteur ? </p>
         <div class="slider-wrap">
           <div class="slider-ends"><span>Voiture électrique</span><span>Tracteur</span></div>
           <input type="range" min="0" max="100" value="30" id="qr" oninput="slideRonfle(this)">
@@ -377,8 +377,8 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
         <h2>Premier matin en voyage ?</h2>
         <div class="opts" data-q="matin">
           <button class="opt" onclick="pick(this,'matin','lever de soleil')">Lever de soleil, debout avant tout le monde</button>
-          <button class="opt" onclick="pick(this,'matin','check-out de justesse')">Check-out de justesse, on a vécu</button>
-          <button class="opt" onclick="pick(this,'matin','ça dépend')">Ça dépend de qui dort à côté</button>
+          <button class="opt" onclick="pick(this,'matin','check-out de justesse')">Grasse mat'</button>
+          <button class="opt" onclick="pick(this,'matin','ça dépend')">Quel réveil ? On a fait la fête toute la nuit</button>
         </div>
       </div>
       <div class="btns"><button class="btn btn-go" onclick="go(14)">Dernière</button></div>
