@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>embarquement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --sun:#ff8a3c;--sun-deep:#e8631f;--stamp:#c0392b;
+  --ink:#3a2415;--ink-soft:#6b4a35;--muted:#a98a70;
+  --paper:#fffaf2;--paper-2:#f4e9d7;--paper-ink:#3a2415;
+  --line:rgba(58,36,21,.15);--line-2:rgba(58,36,21,.28);
+  --shadow:0 20px 50px rgba(150,70,25,.22);
+  --sea1:#7fc6bd;--sea2:#3d8e87;
+}
+html,body{height:100%}
+body{font-family:'DM Sans',sans-serif;background:#ffc491;color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased}
+
+/* ===== sunset scene ===== */
+.sky{position:fixed;inset:0;z-index:0;overflow:hidden;background:linear-gradient(180deg,#ffe9c6 0%,#ffd0a0 30%,#ffb083 55%,#ff9576 78%,#ff8a72 100%)}
+.haze{position:absolute;left:0;right:0;bottom:24%;height:40%;background:radial-gradient(ellipse 60% 100% at 50% 100%,rgba(255,221,150,.7),rgba(255,221,150,0) 70%);opacity:.9}
+.sun{position:absolute;left:50%;bottom:24%;width:190px;height:190px;border-radius:50%;transform:translate(-50%,50%);background:radial-gradient(circle,#fff4d6 0%,#ffdd8e 42%,#ffb85e 68%,rgba(255,160,80,0) 72%);opacity:.95;animation:sunglow 6s ease-in-out infinite}
+.sun::after{content:'';position:absolute;inset:24%;border-radius:50%;background:radial-gradient(circle,#fff0c4,#ffc560);box-shadow:0 0 60px 20px rgba(255,200,110,.55)}
+@keyframes sunglow{0%,100%{transform:translate(-50%,50%) scale(1)}50%{transform:translate(-50%,50%) scale(1.05)}}
+.sea{position:absolute;left:0;right:0;bottom:0;height:24%;background:linear-gradient(180deg,var(--sea1),var(--sea2));overflow:hidden}
+.sea::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 7px,rgba(255,240,205,.6) 7px 10px);-webkit-mask:linear-gradient(90deg,transparent,#000 32%,#000 68%,transparent);mask:linear-gradient(90deg,transparent,#000 32%,#000 68%,transparent);animation:ripple 4s linear infinite}
+@keyframes ripple{from{background-position:0 0}to{background-position:0 20px}}
+.horizon{position:absolute;left:0;right:0;bottom:24%;height:2px;background:linear-gradient(90deg,transparent,rgba(255,245,220,.8),transparent)}
+.cloud{position:absolute;width:62px;height:62px;background:#fffdf8;border-radius:50%;filter:drop-shadow(0 8px 12px rgba(220,110,60,.18))}
+.cloud::before{content:'';position:absolute;width:46px;height:46px;background:#fffdf8;border-radius:50%;top:16px;left:-28px}
+.cloud::after{content:'';position:absolute;width:58px;height:58px;background:#fffdf8;border-radius:50%;top:10px;left:30px}
+.c1{top:11%;animation:d1 30s linear infinite}
+.c2{top:24%;opacity:.78;animation:d2 46s linear infinite;animation-delay:-14s}
+.c3{top:6%;opacity:.6;animation:d3 64s linear infinite;animation-delay:-30s}
+@keyframes d1{from{transform:translateX(-30vw) scale(1.25)}to{transform:translateX(150vw) scale(1.25)}}
+@keyframes d2{from{transform:translateX(-30vw) scale(.85)}to{transform:translateX(150vw) scale(.85)}}
+@keyframes d3{from{transform:translateX(-30vw) scale(.55)}to{transform:translateX(150vw) scale(.55)}}
+.plane-amb{position:absolute;top:30%;left:0;color:#fffaf0;opacity:.95;animation:cross 14s linear infinite}
+.plane-amb::before{content:'';position:absolute;right:100%;top:50%;width:150px;height:2px;transform:translateY(-50%);background:linear-gradient(90deg,transparent,rgba(255,250,240,.75))}
+@keyframes cross{0%{transform:translate(-60px,0) rotate(6deg);opacity:0}9%{opacity:.95}90%{opacity:.95}100%{transform:translate(116vw,-42px) rotate(6deg);opacity:0}}
+.bird{position:absolute;color:rgba(70,40,25,.5)}
+.bird.b1{top:20%;animation:fly1 38s linear infinite}
+.bird.b2{top:23%;animation:fly1 38s linear infinite;animation-delay:-2s;margin-left:26px}
+@keyframes fly1{from{transform:translateX(110vw)}to{transform:translateX(-12vw)}}
+
+.stage{position:relative;z-index:10;height:100dvh;width:100%;display:flex;align-items:center;justify-content:center;padding:22px 18px;overflow:hidden}
+.step{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 18px;opacity:0;transform:translateY(18px);pointer-events:none;transition:opacity .55s ease,transform .55s ease}
+.step.live{opacity:1;transform:none;pointer-events:auto}
+.scroll{width:100%;max-width:430px;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;align-items:center}
+.scroll::-webkit-scrollbar{display:none}
+.eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--sun-deep);margin-bottom:14px}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;line-height:.96;letter-spacing:-.02em;font-size:clamp(34px,11vw,52px);color:var(--ink)}
+h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;line-height:1.02;letter-spacing:-.01em;font-size:clamp(26px,7.5vw,36px)}
+.lede{color:var(--ink-soft);font-size:16px;line-height:1.55;margin-top:14px}
+.tiny{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--muted)}
+.pass{width:100%;max-width:380px;background:var(--paper);color:var(--paper-ink);border-radius:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.pass .top{padding:20px 22px 16px}
+.pass .barcode{height:46px;background:repeating-linear-gradient(90deg,var(--paper-ink) 0 2px,transparent 2px 4px,var(--paper-ink) 4px 5px,transparent 5px 9px);opacity:.85;margin-top:4px}
+.perf{position:relative;height:0;border-top:2px dashed rgba(58,36,21,.28)}
+.row{display:flex;justify-content:space-between;gap:14px}
+.field{margin-top:12px}
+.field .k{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#b09a82}
+.field .v{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:17px;margin-top:2px;color:var(--paper-ink)}
+.passhero{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:30px;line-height:1;letter-spacing:-.02em;color:var(--paper-ink)}
+.stub{background:var(--paper-2);padding:14px 22px}
+.card{width:100%;max-width:400px;background:var(--paper);color:var(--paper-ink);border-radius:16px;box-shadow:var(--shadow);padding:24px 22px;text-align:left}
+.card h2{color:var(--paper-ink)}
+.stamp-line{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-top:1px solid rgba(58,36,21,.12)}
+.stamp-line:first-of-type{border-top:none}
+.stamp-ico{flex:0 0 34px;height:34px;border-radius:9px;background:rgba(232,99,31,.13);display:flex;align-items:center;justify-content:center;color:var(--sun-deep)}
+.stamp-ico svg{width:18px;height:18px}
+.stamp-line p{font-size:14.5px;line-height:1.5;color:#5a4332}
+.stamp-line p b{color:var(--paper-ink);font-weight:700}
+.tag{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;background:var(--paper-2);color:#7a5b3f;border-radius:999px;padding:4px 11px;margin:4px 6px 0 0}
+.factrow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:11px 0;border-top:1px solid rgba(58,36,21,.12)}
+.factrow:first-of-type{border-top:none}
+.factrow .fk{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#b09a82}
+.factrow .fv{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:17px;color:var(--paper-ink);text-align:right}
+.btns{display:flex;flex-direction:column;gap:11px;width:100%;max-width:380px;margin-top:24px}
+.btn{appearance:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;font-size:16px;border-radius:14px;padding:16px 20px;transition:transform .15s ease,filter .2s ease,background .2s ease}
+.btn:active{transform:scale(.975)}
+.btn-go{background:var(--sun);color:#3a1c08;box-shadow:0 10px 24px rgba(232,99,31,.3)}
+.btn-go:hover{filter:brightness(1.05)}
+.btn-ghost{background:rgba(255,250,242,.6);color:var(--ink);border:1.5px solid var(--line-2)}
+.btn-no{background:rgba(255,250,242,.5);color:var(--ink-soft);border:1.5px solid var(--line-2)}
+.btn-no.disabled{cursor:not-allowed;opacity:.55}
+.btn-no.flee{position:fixed;z-index:60;transition:left .28s cubic-bezier(.2,.9,.3,1),top .28s cubic-bezier(.2,.9,.3,1),transform .15s ease;width:auto;padding:13px 22px}
+.note{font-family:'DM Mono',monospace;font-size:11px;color:var(--stamp);text-align:center;margin-top:10px;min-height:14px;letter-spacing:.04em}
+.q{width:100%;max-width:400px;text-align:left}
+.q .qnum{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.3em;color:var(--sun-deep)}
+.q h2{color:var(--ink);margin-top:8px;font-size:clamp(23px,6.6vw,30px)}
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:20px;width:100%}
+.opt{appearance:none;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:13px;padding:15px 16px;transition:border-color .18s ease,background .18s ease,transform .15s ease;line-height:1.35;box-shadow:0 6px 16px rgba(150,70,25,.08)}
+.opt:hover{border-color:rgba(232,99,31,.5)}
+.opt.sel{border-color:var(--sun-deep);background:rgba(255,138,60,.14)}
+.opt.refused{border-color:var(--stamp);background:rgba(192,57,43,.12)}
+.opt:active{transform:scale(.99)}
+.qinput{width:100%;margin-top:22px;background:var(--paper);border:1.5px solid var(--line);border-radius:13px;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:16px;padding:15px 16px;outline:none;box-shadow:0 6px 16px rgba(150,70,25,.08)}
+.qinput:focus{border-color:var(--sun-deep)}
+.slider-wrap{margin-top:26px;width:100%}
+.slider-ends{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:12px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;background:linear-gradient(90deg,var(--sun) var(--p,40%),rgba(58,36,21,.16) var(--p,40%));outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid var(--sun);cursor:grab;box-shadow:0 4px 12px rgba(150,70,25,.3)}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid var(--sun);cursor:grab}
+.slider-read{text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;margin-top:16px;color:var(--sun-deep);min-height:24px}
+.prog{position:fixed;top:0;left:0;height:3px;background:var(--sun);width:0;z-index:70;transition:width .5s ease}
+.bigstamp{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(46px,15vw,76px);color:var(--stamp);border:5px solid var(--stamp);border-radius:14px;padding:6px 22px;display:inline-block;transform:rotate(-7deg);letter-spacing:.02em;opacity:0;animation:thunk .5s .25s cubic-bezier(.3,1.4,.5,1) forwards}
+@keyframes thunk{0%{opacity:0;transform:rotate(-7deg) scale(2.4)}60%{opacity:1}100%{opacity:1;transform:rotate(-7deg) scale(1)}}
+.pct{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(40px,12vw,60px);color:var(--sun-deep);margin-top:26px;letter-spacing:-.02em}
+#passportCanvas{width:100%;max-width:360px;border-radius:14px;box-shadow:var(--shadow);margin:18px auto 0;display:block}
+.sendline{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(24px,7vw,34px);line-height:1.05;letter-spacing:-.01em;color:var(--ink)}
+.sendline .hl{color:var(--sun-deep)}
+.plane{position:fixed;z-index:65;color:var(--sun-deep);pointer-events:none;opacity:0}
+@media (prefers-reduced-motion:reduce){
+  .step{transition:opacity .2s ease}.bigstamp{animation:none;opacity:1}
+}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+
+<div class="sky">
+  <div class="haze"></div>
+  <div class="sun"></div>
+  <svg class="plane-amb" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L11 19v-5.5z"/></svg>
+  <svg class="bird b1" width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 9 L7 3 L11 7 L15 3 L20 9"/></svg>
+  <svg class="bird b2" width="16" height="9" viewBox="0 0 22 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 9 L7 3 L11 7 L15 3 L20 9"/></svg>
+  <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+  <div class="horizon"></div>
+  <div class="sea"></div>
+</div>
+
+<svg class="plane" id="plane" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L11 19v-5.5z"/></svg>
+
+<div class="stage" id="stage">
+
+  <!-- 0 COVER -->
+  <section class="step live" data-step="0">
+    <div class="scroll">
+      <div class="eyebrow">carte d'embarquement</div>
+      <div class="pass">
+        <div class="top">
+          <div class="row">
+            <div><div class="tiny" style="color:#b09a82">vol</div><div class="passhero">VAL → MIA</div></div>
+            <div style="text-align:right"><div class="tiny" style="color:#b09a82">porte</div><div class="passhero">B12</div></div>
+          </div>
+          <div class="row">
+            <div class="field"><div class="k">passagère</div><div class="v">Mia</div></div>
+            <div class="field"><div class="k">siège</div><div class="v">1A · hublot</div></div>
+          </div>
+          <div class="field"><div class="k">destination</div><div class="v">à définir</div></div>
+          <div class="barcode"></div>
+        </div>
+        <div class="perf"></div>
+        <div class="stub">
+          <div class="row">
+            <div class="field" style="margin-top:0"><div class="k">statut</div><div class="v" style="color:var(--sun-deep)">embarquement immédiat</div></div>
+            <div class="field" style="margin-top:0;text-align:right"><div class="k">classe</div><div class="v">première</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="btns">
+        <button class="btn btn-go" onclick="go(1)">Embarquer</button>
+        <button class="btn btn-no disabled" id="coverNo" onclick="coverNoClick()">Annuler le vol</button>
+        <div class="note" id="coverNote"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1 EN-TÊTE -->
+  <section class="step" data-step="1">
+    <div class="scroll">
+      <div class="card">
+        <div class="eyebrow">candidature spontanée</div>
+        <h2>Valentin</h2>
+        <div style="margin-top:18px">
+          <div class="field"><div class="k" style="color:#b09a82">poste visé</div><div class="v">Partenaire de voyage. CDI. Et + si feeling.</div></div>
+          <div class="field"><div class="k" style="color:#b09a82">dossier étudié pour</div><div class="v" style="color:var(--sun-deep)">Mia Istace</div></div>
+        </div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(2)">Continuer</button></div>
+    </div>
+  </section>
+
+  <!-- 2 FICHE PASSAGER -->
+  <section class="step" data-step="2">
+    <div class="scroll">
+      <div class="card">
+        <div class="eyebrow">fiche passager</div>
+        <h2>Le strict<br>nécessaire.</h2>
+        <div style="margin-top:16px">
+          <div class="factrow"><span class="fk">domicile</span><span class="fv">Heusy</span></div>
+          <div class="factrow"><span class="fk">âge</span><span class="fv">25 ans</span></div>
+          <div class="factrow"><span class="fk">études</span><span class="fv">ing. de gestion,<br>bientôt industriel</span></div>
+          <div class="factrow"><span class="fk">taille</span><span class="fv">1m81</span></div>
+          <div class="factrow"><span class="fk">langues</span><span class="fv">fr · es · en</span></div>
+        </div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(3)">Continuer</button></div>
+    </div>
+  </section>
+
+  <!-- 3 CE QUE JE CHERCHE -->
+  <section class="step" data-step="3">
+    <div class="scroll" style="text-align:center">
+      <div class="eyebrow">ce que je cherche</div>
+      <h1>Sérieux,<br>mais jamais<br>chiant.</h1>
+      <p class="lede">Une relation sérieuse, mais pas chiante. Beaucoup de fun.</p>
+      <div class="btns"><button class="btn btn-go" onclick="go(4)">Les expériences</button></div>
+    </div>
+  </section>
+
+  <!-- 4 EXPÉRIENCES -->
+  <section class="step" data-step="4">
+    <div class="scroll">
+      <div class="card">
+        <div class="eyebrow">expériences</div>
+        <h2>Le terrain<br>parle pour moi.</h2>
+        <div style="margin-top:16px">
+          <div class="stamp-line">
+            <div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg></div>
+            <p><b>Souvenir le plus cringe.</b> Me faire bloquer à l'avant d'un avion par les deux stewards, parce qu'ils me trouvaient mignon. Ils étaient en couple, je savais plus où me mettre.</p>
+          </div>
+          <div class="stamp-line">
+            <div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a11 11 0 1 0 0 22 11 11 0 0 0 0-22zm1 11.59V6h-2v7.41l5 5L17.41 17 13 12.59z"/></svg></div>
+            <p><b>Pire timing.</b> Une petite pierre au rein, la veille de reprendre l'avion. Le timing, un art.</p>
+          </div>
+        </div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(5)">Les compétences</button></div>
+    </div>
+  </section>
+
+  <!-- 5 COMPÉTENCES -->
+  <section class="step" data-step="5">
+    <div class="scroll">
+      <div class="card">
+        <div class="eyebrow">compétences · en voyage</div>
+        <h2>Bon en cabine,<br>meilleur dehors.</h2>
+        <div style="margin-top:14px">
+          <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div><p><b>Gérer les imprévus.</b></p></div>
+          <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div><p><b>Parler aux locaux.</b> Partout, tout le temps, parfois trop.</p></div>
+          <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div><p><b>Photographe officiel.</b></p></div>
+          <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div><p><b>Traducteur.</b> Français, espagnol, anglais.</p></div>
+          <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg></div><p><b>Massage les pieds dans le sable.</b> Spécialité maison. Sur demande, évidemment.</p></div>
+          <div class="stamp-line"><div class="stamp-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 16 3 5l5.5 5L12 4l3.5 6L21 5l-2 11zM5 18h14v2H5z"/></svg></div><p><b>Champion de château de sable junior 2012,</b> province de Liège. Palmarès consultable sur demande.</p></div>
+        </div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(6)">À déclarer à la douane</button></div>
+    </div>
+  </section>
+
+  <!-- 6 DOUANE -->
+  <section class="step" data-step="6">
+    <div class="scroll">
+      <div class="card">
+        <div class="eyebrow">à déclarer à la douane</div>
+        <h2>Rien à cacher.<br>Presque.</h2>
+        <p class="lede" style="color:#5a4332;margin-top:10px"><b style="color:var(--paper-ink)">Talents :</b> imitations de cris d'animaux, et massages. Jamais les deux en même temps. Promis.</p>
+        <div style="margin-top:14px">
+          <span class="tag">intolérant gluten + lactose</span>
+          <span class="tag">un peu fou</span>
+          <span class="tag">sans filtre</span>
+          <span class="tag">poisson ascendant requin</span>
+        </div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(7)">Passer à l'entretien</button></div>
+    </div>
+  </section>
+
+  <!-- 7 ENTRETIEN (non fuyant) -->
+  <section class="step" data-step="7">
+    <div class="scroll" style="text-align:center">
+      <div class="eyebrow">entretien</div>
+      <h1>Dossier<br>complet.</h1>
+      <p class="lede">À ton tour. Quelques questions, histoire qu'on se connaisse un peu mieux. Tu te lances ?</p>
+      <div class="btns">
+        <button class="btn btn-go" onclick="go(8)">Oui, je me lance</button>
+        <button class="btn btn-no" id="fleeNo" onmouseenter="flee()" onmousedown="flee()" ontouchstart="flee(event)" onclick="fleeCaught()">Non</button>
+        <div class="note" id="fleeNote"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 Q1 VILLE -->
+  <section class="step" data-step="8">
+    <div class="scroll">
+      <div class="q">
+        <div class="qnum">question 01 / 07</div>
+        <h2>Tu habites où ?</h2>
+        <p class="lede">Moi c'est Heusy. Toi, je viens te chercher où ?</p>
+        <input type="text" class="qinput" id="ville" placeholder="ta ville / ton quartier" oninput="ans.ville=this.value">
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(9)">Suivant</button></div>
+    </div>
+  </section>
+
+  <!-- 9 Q2 TAILLE -->
+  <section class="step" data-step="9">
+    <div class="scroll">
+      <div class="q">
+        <div class="qnum">question 02 / 07</div>
+        <h2>Et tu mesures combien ?</h2>
+        <p class="lede">Moi 1m81. Place le curseur, pas de triche.</p>
+        <div class="slider-wrap">
+          <div class="slider-ends"><span>1m50</span><span>1m81</span></div>
+          <input type="range" min="150" max="181" value="166" id="qt" oninput="slideTaille(this)">
+          <div class="slider-read" id="qtread">1m66</div>
+        </div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(10)">Suivant</button></div>
+    </div>
+  </section>
+
+  <!-- 10 Q3 RONFLEMENT -->
+  <section class="step" data-step="10">
+    <div class="scroll">
+      <div class="q">
+        <div class="qnum">question 03 / 07</div>
+        <h2>Ton ronflement, c'est plutôt...</h2>
+        <p class="lede">Moi je suis niveau voiture électrique, certifié. À toi d'être honnête.</p>
+        <div class="slider-wrap">
+          <div class="slider-ends"><span>Voiture électrique</span><span>Tracteur</span></div>
+          <input type="range" min="0" max="100" value="30" id="qr" oninput="slideRonfle(this)">
+          <div class="slider-read" id="qrread">Silencieuse, suspecte</div>
+        </div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(11)">Suivant</button></div>
+    </div>
+  </section>
+
+  <!-- 11 Q4 QUALITÉS EN VOYAGE -->
+  <section class="step" data-step="11">
+    <div class="scroll">
+      <div class="q">
+        <div class="qnum">question 04 / 07</div>
+        <h2>Ta plus grande qualité en voyage ?</h2>
+        <div class="opts" data-q="qualite">
+          <button class="opt" onclick="pickQuality(this,'spontanéité')">La spontanéité</button>
+          <button class="opt" onclick="pickQuality(this,'bonne humeur')">Bonne humeur en toutes circonstances</button>
+          <button class="opt" onclick="pickQuality(this,'sociable')">Je parle à tout le monde</button>
+          <button class="opt" onclick="pickQuality(this,'bons plans')">Je trouve toujours les bons plans</button>
+          <button class="opt" onclick="pickQuality(this,'organisation')">L'organisation</button>
+        </div>
+        <div class="note" id="qualNote"></div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(12)">Suivant</button></div>
+    </div>
+  </section>
+
+  <!-- 12 Q5 TERRAIN -->
+  <section class="step" data-step="12">
+    <div class="scroll">
+      <div class="q">
+        <div class="qnum">question 05 / 07</div>
+        <h2>Pour de vrai : plage ou montagne ?</h2>
+        <div class="opts" data-q="terrain">
+          <button class="opt" onclick="pick(this,'terrain','plage')">Plage, sel et zéro réseau</button>
+          <button class="opt" onclick="pick(this,'terrain','montagne')">Montagne, air froid et silence</button>
+          <button class="opt" onclick="pick(this,'terrain','les deux')">Les deux, je suis exigeante</button>
+        </div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(13)">Suivant</button></div>
+    </div>
+  </section>
+
+  <!-- 13 Q6 MATIN -->
+  <section class="step" data-step="13">
+    <div class="scroll">
+      <div class="q">
+        <div class="qnum">question 06 / 07</div>
+        <h2>Premier matin en voyage ?</h2>
+        <div class="opts" data-q="matin">
+          <button class="opt" onclick="pick(this,'matin','lever de soleil')">Lever de soleil, debout avant tout le monde</button>
+          <button class="opt" onclick="pick(this,'matin','check-out de justesse')">Check-out de justesse, on a vécu</button>
+          <button class="opt" onclick="pick(this,'matin','ça dépend')">Ça dépend de qui dort à côté</button>
+        </div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="go(14)">Dernière</button></div>
+    </div>
+  </section>
+
+  <!-- 14 Q7 AÉROPORT -->
+  <section class="step" data-step="14">
+    <div class="scroll">
+      <div class="q">
+        <div class="qnum">question 07 / 07</div>
+        <h2>Vol annulé. 8h à tuer à l'aéroport. Tu...</h2>
+        <div class="opts" data-q="aero">
+          <button class="opt" onclick="pick(this,'aero','refais le monde avec moi')">Refais le monde avec moi</button>
+          <button class="opt" onclick="pick(this,'aero','dévalises le duty-free')">Dévalises le duty-free</button>
+          <button class="opt" onclick="pick(this,'aero','dors sur quatre sièges')">Dors sur quatre sièges, la bouche ouverte</button>
+          <button class="opt" onclick="pick(this,'aero','pleures près de la B12')">Pleures discrètement près de la porte B12</button>
+        </div>
+      </div>
+      <div class="btns"><button class="btn btn-go" onclick="reveal()">Voir le verdict</button></div>
+    </div>
+  </section>
+
+  <!-- 15 VERDICT -->
+  <section class="step" data-step="15">
+    <div class="scroll" style="text-align:center">
+      <div class="eyebrow">analyse de compatibilité</div>
+      <div class="bigstamp">VALIDÉE</div>
+      <div class="pct">99,4%</div>
+      <p class="lede" style="max-width:360px">Étude scientifique rigoureuse, menée par le créateur de ce CV. Parfaitement objectif. Conclusion sans appel : on est faits pour partir loin ensemble.</p>
+      <div class="btns"><button class="btn btn-go" onclick="finalize()">Récupérer mon passeport</button></div>
+    </div>
+  </section>
+
+  <!-- 16 FINAL -->
+  <section class="step" data-step="16">
+    <div class="scroll" style="text-align:center">
+      <div class="eyebrow">embarquement confirmé</div>
+      <p class="sendline">Tu es <span class="hl">validée</span>.<br>Envoie-moi ton passeport.</p>
+      <canvas id="passportCanvas" width="720" height="1120"></canvas>
+      <div class="btns">
+        <button class="btn btn-go" onclick="downloadPass()">Télécharger mon passeport</button>
+        <button class="btn btn-ghost" onclick="go(0)">Recommencer</button>
+        <div class="note" style="color:var(--sun-deep)">Capture ou télécharge l'image, puis renvoie-la-moi. C'est ta carte d'embarquement.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const STEPS=document.querySelectorAll('.step');
+const TOTAL=STEPS.length;
+const ans={ville:'',taille:166,ronfle:30,qualite:'',terrain:'',matin:'',aero:''};
+let cur=0;
+function setProg(){document.getElementById('prog').style.width=(cur/(TOTAL-1)*100)+'%';}
+function go(n){
+  if(n===cur) return;
+  const from=STEPS[cur], to=STEPS[n];
+  from.classList.remove('live');
+  cur=n; flyPlane();
+  setTimeout(()=>{ to.classList.add('live'); to.querySelector('.scroll').scrollTop=0; },120);
+  setProg();
+}
+const coverQuips=["Ce bouton ne marche pas. C'est volontaire.","Annulation refusée. Embarque, on verra après.","Tu liras au moins la première page, non ?"];
+let ci=0;
+function coverNoClick(){document.getElementById('coverNote').textContent=coverQuips[ci%coverQuips.length];ci++;}
+let fled=0;
+function flee(e){
+  if(e&&e.cancelable) e.preventDefault();
+  const b=document.getElementById('fleeNo');
+  if(!b.classList.contains('flee')){const r=b.getBoundingClientRect();b.style.left=r.left+'px';b.style.top=r.top+'px';b.classList.add('flee');}
+  const pad=20,bw=b.offsetWidth,bh=b.offsetHeight;
+  b.style.left=(pad+Math.random()*(window.innerWidth-bw-pad*2))+'px';
+  b.style.top=(pad+Math.random()*(window.innerHeight-bh-pad*2))+'px';
+  fled++;
+  const fn=document.getElementById('fleeNote');
+  if(fled===2) fn.textContent="il bouge, hein.";
+  if(fled===4) fn.textContent="tu peux arrêter, « non » n'est pas une option.";
+  if(fled>=6) fn.textContent="ok tu es têtue. j'aime bien.";
+}
+function fleeCaught(){document.getElementById('fleeNote').textContent="raté. clique « oui ».";}
+function tailleStr(cm){const m=Math.floor(cm/100);const r=cm%100;return m+'m'+String(r).padStart(2,'0');}
+function slideTaille(el){const v=+el.value;ans.taille=v;el.style.setProperty('--p',((v-150)/31*100)+'%');document.getElementById('qtread').textContent=tailleStr(v);}
+function slideRonfle(el){const v=+el.value;ans.ronfle=v;el.style.setProperty('--p',v+'%');document.getElementById('qrread').textContent=ronfleLabel(v);}
+function ronfleLabel(v){if(v<20)return"Voiture électrique certifiée";if(v<45)return"Silencieuse, suspecte";if(v<70)return"Petit moteur tranquille";if(v<88)return"Bon vieux diesel";return"Tracteur. Assumé.";}
+function ronfleShort(v){return v<45?'silencieuse':(v<88?'modérée':'tracteur');}
+function pick(el,q,val){el.parentNode.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');ans[q]=val;}
+function pickQuality(el,val){
+  const note=document.getElementById('qualNote');
+  const opts=el.parentNode.querySelectorAll('.opt');
+  if(val==='organisation'){
+    opts.forEach(o=>o.classList.remove('sel'));
+    el.classList.add('refused');
+    note.textContent="Organisation ? Avec ta Martinique en chantier ? Refusé. Choisis autre chose.";
+    ans.qualite='';
+    return;
+  }
+  opts.forEach(o=>{o.classList.remove('sel');o.classList.remove('refused');});
+  el.classList.add('sel');note.textContent='';ans.qualite=val;
+}
+function reveal(){go(15);}
+function finalize(){drawPassport();go(16);}
+function flyPlane(){
+  const p=document.getElementById('plane');
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  p.style.transition='none';p.style.opacity='0';p.style.left='-40px';p.style.top=(window.innerHeight*0.32)+'px';p.style.transform='rotate(8deg)';
+  requestAnimationFrame(()=>{
+    p.style.transition='left 1s cubic-bezier(.4,0,.2,1),top 1s cubic-bezier(.4,0,.2,1),opacity .25s ease';
+    p.style.opacity='.95';p.style.left=(window.innerWidth+40)+'px';p.style.top=(window.innerHeight*0.2)+'px';
+    setTimeout(()=>{p.style.opacity='0';},950);
+  });
+}
+function drawPassport(){
+  const c=document.getElementById('passportCanvas'),x=c.getContext('2d'),W=c.width,H=c.height;
+  x.fillStyle='#13201f';x.fillRect(0,0,W,H);
+  x.fillStyle='#f3ead7';roundRect(x,30,30,W-60,H-60,28);x.fill();
+  x.strokeStyle='#d96a26';x.lineWidth=3;roundRect(x,54,54,W-108,H-108,18);x.stroke();
+  x.textAlign='left';
+  x.fillStyle='#9a8f78';x.font='500 22px "DM Mono",monospace';x.fillText('PASSEPORT · EMBARQUEMENT',86,118);
+  x.fillStyle='#1c2b2d';x.font='800 64px "Bricolage Grotesque",sans-serif';x.fillText('MIA',86,184);
+  x.save();x.translate(W-210,150);x.rotate(-0.18);
+  x.strokeStyle='#bf3a2f';x.lineWidth=5;roundRect(x,-8,-46,200,78,10);x.stroke();
+  x.fillStyle='#bf3a2f';x.font='800 46px "Bricolage Grotesque",sans-serif';x.textAlign='center';x.fillText('VALIDÉE',92,22);x.restore();
+  x.strokeStyle='rgba(28,43,45,.18)';x.lineWidth=2;x.beginPath();x.moveTo(86,224);x.lineTo(W-86,224);x.stroke();
+  x.textAlign='left';
+  const rows=[
+    ['DOMICILE',ans.ville||'à confirmer'],
+    ['TAILLE',tailleStr(ans.taille)],
+    ['COMPATIBILITÉ','99,4% (analyse maison)'],
+    ['RONFLEMENT',ronfleShort(ans.ronfle)],
+    ['QUALITÉ EN VOYAGE',ans.qualite||'à confirmer'],
+    ['TERRAIN',ans.terrain||'à confirmer']
+  ];
+  let y=290;
+  rows.forEach(r=>{
+    x.fillStyle='#9a8f78';x.font='500 19px "DM Mono",monospace';x.fillText(r[0],86,y);
+    x.fillStyle='#1c2b2d';x.font='600 30px "Bricolage Grotesque",sans-serif';x.fillText(clip(x,r[1],W-172),86,y+38);
+    y+=92;
+  });
+  x.fillStyle='#13201f';roundRect(x,86,H-250,W-172,96,14);x.fill();
+  x.fillStyle='#ef8a3c';x.textAlign='center';x.font='800 34px "Bricolage Grotesque",sans-serif';x.fillText('RENVOIE-MOI CE PASSEPORT',W/2,H-198);
+  x.fillStyle='#d8cfba';x.font='500 19px "DM Mono",monospace';x.fillText('pour confirmer ton embarquement',W/2,H-168);
+  x.textAlign='left';let bx=86;const by=H-104;
+  for(let i=0;i<70;i++){const bw=Math.random()<0.5?3:6;x.fillStyle='#1c2b2d';if(Math.random()<0.8)x.fillRect(bx,by,bw,40);bx+=bw+2;}
+  x.fillStyle='#9a8f78';x.font='500 18px "DM Mono",monospace';x.fillText('N° VAL-MIA-1A · CLASSE PREMIÈRE',86,H-46);
+}
+function clip(x,t,max){let s=t;while(x.measureText(s).width>max&&s.length>4){s=s.slice(0,-2);}return s===t?t:s+'…';}
+function roundRect(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();}
+function downloadPass(){const c=document.getElementById('passportCanvas');const a=document.createElement('a');a.download='passeport-mia.png';a.href=c.toDataURL('image/png');a.click();}
+setProg();
+</script>
+</body>
+</html>
